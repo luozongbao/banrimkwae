@@ -1,147 +1,279 @@
 
-## Technical Requirements 
-1. Architecture
+# Banrimkwae Resort Management System - Technical Requirements
+
+## 1. System Architecture
 
 **1.1 Overall Architecture**
 
-- **Web-Based Application:** Primary interface for most users (front desk, management, restaurant staff).
-- **API-First Approach:** Design the backend with a RESTful API to support both the web application and future mobile applications.
+- **Cloud-Native Web Application**: Scalable resort management platform optimized for Banrimkwae's operations
+- **API-First Design**: RESTful backend services supporting web interface and future mobile applications
+- **Microservices-Ready Architecture**: Modular design allowing independent scaling of different system components
 - **Three-Tier Architecture:**
-    - **Presentation Tier:** Web-based UI (HTML, CSS, JavaScript).
-    - **Application Tier:** Backend logic and API endpoints (e.g., Python/Django, Node.js/Express, Java/Spring).
-    - **Data Tier:** Database for storing all data (e.g., PostgreSQL, MySQL, MongoDB).
+    - **Presentation Tier**: Responsive web interface (React/Vue.js)
+    - **Application Tier**: Business logic and API services (Python Django/Node.js Express)
+    - **Data Tier**: Relational database with caching layer (PostgreSQL + Redis)
 
-**1.2 Technology Stack**
+**1.2 Recommended Technology Stack**
 
-- **Frontend (Web):**
-    - HTML5, CSS3, JavaScript
-    - Modern JavaScript framework (React, Angular, Vue.js) for a responsive and interactive UI.
-- **Backend (API):**
-    - Language: Python (with Django/Flask), Node.js (with Express), Java (with Spring Boot).
-    - RESTful API design.
-    - Authentication and authorization (JWT, OAuth 2.0).
-- **Database:**
-    - Relational Database: PostgreSQL or MySQL (for structured data).
-    - NoSQL Database: MongoDB (for flexible data, e.g., guest preferences).
-- **Server:**
-    - Cloud-based (AWS, Google Cloud, Azure) or on-premise.
-    - Web server: Nginx or Apache.
-2. Web Application Requirements
+- **Frontend (Web Application):**
+    - **Framework**: React.js with TypeScript for type safety
+    - **UI Library**: Material-UI or Ant Design for consistent interface
+    - **State Management**: Redux Toolkit for application state
+    - **Charts & Analytics**: Chart.js or D3.js for reporting visualizations
+    - **Real-time Updates**: Socket.io client for live notifications
 
-**2.1 User Interface**
+- **Backend (API Services):**
+    - **Primary Option**: Python with Django REST Framework
+    - **Alternative**: Node.js with Express.js and TypeScript
+    - **Authentication**: JWT with refresh token strategy
+    - **API Documentation**: Swagger/OpenAPI 3.0 with automated generation
+    - **File Storage**: AWS S3 or equivalent for documents and images
 
-- **Responsive Design:** Adaptable to different screen sizes (desktops, tablets).
-- **Intuitive Navigation:** Easy-to-use menus and workflows.
-- **Accessibility:** Adherence to accessibility standards (WCAG).
+- **Database & Storage:**
+    - **Primary Database**: PostgreSQL 14+ for ACID compliance and complex queries
+    - **Caching Layer**: Redis for session management and frequently accessed data
+    - **Search Engine**: PostgreSQL full-text search or Elasticsearch for advanced search
+    - **Backup Strategy**: Automated daily backups with point-in-time recovery
 
-**2.2 Functionality**
+- **Infrastructure & Deployment:**
+    - **Containerization**: Docker with Docker Compose for development
+    - **Cloud Platform**: AWS, Google Cloud, or Azure (with Thai data center preference)
+    - **Web Server**: Nginx as reverse proxy and static file server
+    - **SSL/TLS**: Let's Encrypt for automatic certificate management
+## 2. Web Application Requirements
 
-- **Accommodation Management:**
-    - Room/raft/house inventory management.
-    - Booking and reservation management.
-    - Check-in/check-out processes.
-- **Restaurant Management:**
-    - Menu management.
-    - Order taking and billing.
-- **Stock Management:**
-    - Inventory tracking.
-    - Low stock alerts.
-    - Stock movement recording.
-- **Reporting:**
-    - Occupancy reports.
-    - Revenue reports.
-    - Stock reports.
-- **User Management:**
-    - Role-based access control.
-    - User activity logging.
-3. API Requirements
+**2.1 User Interface & Experience**
 
-**3.1 API Endpoints**
+- **Responsive Design**: Mobile-first approach supporting tablets, desktops, and large displays
+- **Progressive Web App (PWA)**: Offline capabilities for basic functions during internet outages
+- **Multi-language Support**: Thai (primary), English, Chinese with RTL language preparation
+- **Accessibility**: WCAG 2.1 AA compliance for inclusive design
+- **Dark/Light Theme**: User preference-based interface themes
+- **Real-time Updates**: Live notifications for bookings, orders, and alerts
 
-- **Accommodation:**
-    - /api/rooms: Get all rooms, create a new room.
-    - /api/rooms/{id}: Get, update, or delete a specific room.
-    - /api/bookings: Get all bookings, create a new booking.
-    - /api/bookings/{id}: Get, update, or delete a specific booking.
-- **Restaurant:**
-    - /api/menu: Get all menu items, create a new menu item.
-    - /api/menu/{id}: Get, update, or delete a specific menu item.
-    - /api/orders: Get all orders, create a new order.
-    - /api/orders/{id}: Get, update, or delete a specific order.
-- **Stock:**
-    - /api/inventory: Get all inventory items, create a new item.
-    - /api/inventory/{id}: Get, update, or delete a specific item.
-- **Users:**
-    - /api/users: Get all users, create a new user.
-    - /api/users/{id}: Get, update, or delete a specific user.
+**2.2 Core Application Modules**
 
-**3.2 Authentication & Authorization**
+- **Dashboard Module**:
+    - Real-time occupancy status with visual room/raft layouts
+    - Revenue metrics and key performance indicators
+    - Quick action buttons for common tasks
+    - Alert notifications for urgent matters
 
-- **JWT (JSON Web Tokens):** For authenticating users and securing API endpoints.
-- **OAuth 2.0:** For third-party integrations (optional).
+- **Accommodation Management**:
+    - Interactive floor plans for rafts and houses
+    - Drag-and-drop room assignment interface
+    - Calendar view with availability heatmaps
+    - Guest profile management with history tracking
 
-**3.3 Data Format**
+- **Restaurant Management**:
+    - Touch-friendly POS interface for ordering
+    - Kitchen display system with order queuing
+    - Menu management with photo support
+    - Table/room service location tracking
 
-- **JSON:** For all API requests and responses.
+- **Inventory Management**:
+    - Barcode scanning support for stock management
+    - Low stock alerts with automated reorder suggestions
+    - Stock movement tracking with location mapping
+    - Supplier management and purchase order system
 
-**3.4 API Documentation**
+- **Reporting & Analytics**:
+    - Interactive dashboards with drill-down capabilities
+    - Scheduled report generation and email delivery
+    - Data visualization with charts and graphs
+    - Export functionality (PDF, Excel, CSV)
+## 3. API Requirements & Design
 
-- **Swagger/OpenAPI:** For documenting API endpoints and data structures.
+**3.1 RESTful API Endpoints**
 
-4. Mobile Application (Future)
+- **Accommodation Management**:
+    - `GET/POST /api/accommodations` - List/create accommodation units
+    - `GET/PUT/DELETE /api/accommodations/{id}` - Manage individual accommodations
+    - `GET/POST /api/rooms` - Room inventory management
+    - `GET/PUT/DELETE /api/rooms/{id}` - Individual room operations
+    - `GET /api/rooms/availability` - Real-time availability checking
 
-**4.1 Platform Support**
+- **Booking & Reservation**:
+    - `GET/POST /api/bookings` - Booking management
+    - `GET/PUT/DELETE /api/bookings/{id}` - Individual booking operations
+    - `POST /api/bookings/{id}/checkin` - Check-in process
+    - `POST /api/bookings/{id}/checkout` - Check-out process
+    - `GET /api/guests` - Guest management
+    - `POST /api/guests/{id}/merge` - Merge duplicate guest profiles
 
-- iOS
-- Android.
+- **Restaurant Operations**:
+    - `GET/POST /api/menu` - Menu management
+    - `GET/PUT/DELETE /api/menu/{id}` - Menu item operations
+    - `GET/POST /api/orders` - Order management
+    - `PUT /api/orders/{id}/status` - Update order status
+    - `POST /api/orders/{id}/link-guest` - Link order to guest account
 
-**4.2 Functionality**
+- **Inventory Management**:
+    - `GET/POST /api/inventory` - Inventory item management
+    - `POST /api/inventory/transactions` - Stock movement recording
+    - `GET /api/inventory/alerts` - Low stock notifications
+    - `GET /api/suppliers` - Supplier management
+    - `POST /api/inventory/transfer` - Inter-location transfers
 
-- **Guest-facing features:**
-    - Booking and reservation.
-    - Check-in/check-out.
-    - Restaurant ordering.
-    - Loyalty programs.
-- **Staff-facing features:**
-    - Task management.
-    - Real-time updates.
+- **Billing & Payments**:
+    - `GET/POST /api/bills` - Bill generation and management
+    - `POST /api/payments` - Payment processing
+    - `GET /api/bills/{id}/items` - Bill item details
+    - `POST /api/bills/{id}/split` - Split billing functionality
 
-5. Security Requirements
+**3.2 Authentication & Security**
 
-**5.1 Data Encryption**
+- **JWT Authentication**: Stateless token-based authentication with refresh tokens
+- **Role-Based Access Control (RBAC)**: Fine-grained permissions for different user roles
+- **API Rate Limiting**: Prevent abuse with configurable rate limits
+- **Input Validation**: Comprehensive validation using JSON Schema
+- **SQL Injection Prevention**: Parameterized queries and ORM usage
+- **CORS Configuration**: Secure cross-origin resource sharing
 
-- **HTTPS:** For all web traffic.
-- **Encryption at Rest:** Encrypt sensitive data in the database.
+**3.3 Data Format & Standards**
+
+- **JSON API**: Consistent JSON response format with meta information
+- **ISO Standards**: Date/time in ISO 8601, currency codes in ISO 4217
+- **Error Handling**: Standardized error responses with proper HTTP status codes
+- **Pagination**: Consistent pagination for large datasets
+- **Versioning**: API versioning strategy for backward compatibility
+
+**3.4 API Documentation & Testing**
+
+- **OpenAPI 3.0 Specification**: Complete API documentation with examples
+- **Interactive Documentation**: Swagger UI for testing and exploration
+- **Postman Collections**: Predefined API test collections
+- **Automated Testing**: Unit and integration tests for all endpoints
+
+## 4. Mobile Application (Future Phase)
+
+**4.1 Platform Support & Framework**
+
+- **Cross-Platform Development**: React Native or Flutter for iOS and Android
+- **Progressive Web App**: Mobile-optimized web interface as interim solution
+- **Offline Capabilities**: Core functionality available without internet connection
+- **Push Notifications**: Real-time alerts for staff and guests
+
+**4.2 Guest-Facing Mobile Features**
+
+- **Booking & Reservations**: Search, book, and modify reservations
+- **Digital Check-in/Check-out**: Mobile check-in with digital key support
+- **Room Service Ordering**: Browse menu and place orders from mobile device
+- **Bill Review**: View current charges and payment history
+- **Resort Information**: Maps, amenities, and service information
+- **Loyalty Program**: Point tracking and reward redemption
+
+**4.3 Staff-Facing Mobile Features**
+
+- **Task Management**: Housekeeping and maintenance task lists
+- **Inventory Checking**: Mobile stock counting and updates
+- **Guest Communication**: Respond to service requests
+- **Real-time Updates**: Live booking and order status updates
+- **Emergency Alerts**: Critical system notifications
+
+## 5. Security & Compliance Requirements
+
+**5.1 Data Protection & Privacy**
+
+- **HTTPS Everywhere**: SSL/TLS encryption for all data transmission
+- **Data Encryption at Rest**: Database-level encryption for sensitive information
+- **PCI DSS Compliance**: Payment card industry security standards
+- **Personal Data Protection**: GDPR-like compliance for guest information
+- **Access Logging**: Comprehensive audit trail for all system access
+- **Data Retention Policies**: Automated cleanup of old data per legal requirements
 
 **5.2 Authentication & Authorization**
 
-- **Strong Passwords:** Enforce strong password policies.
-- **Role-Based Access Control:** Limit access based on user roles.
+- **Multi-Factor Authentication (MFA)**: Optional 2FA for administrative users
+- **Strong Password Policies**: Enforced complexity and rotation requirements
+- **Session Management**: Secure session handling with automatic timeout
+- **Failed Login Protection**: Account lockout after failed attempts
+- **Privilege Escalation Prevention**: Principle of least privilege enforcement
 
-**5.3 Vulnerability Scanning**
+**5.3 System Security**
 
-- Regular security audits and penetration testing.
+- **Regular Security Audits**: Quarterly penetration testing and vulnerability assessment
+- **Dependency Management**: Automated security updates for third-party libraries
+- **Database Security**: Encrypted connections and access control
+- **Backup Encryption**: Encrypted backups with secure key management
+- **Incident Response Plan**: Documented procedures for security breaches
 
-6. Deployment
+## 6. Deployment & DevOps
 
-**6.1 Environment**
+**6.1 Environment Strategy**
 
-- Development, staging, and production environments.
+- **Development Environment**: Local Docker containers for rapid development
+- **Staging Environment**: Cloud-based replica of production for testing
+- **Production Environment**: High-availability cloud deployment
+- **Environment Parity**: Consistent configuration across all environments
 
-**6.2 Deployment Strategy**
+**6.2 Deployment & CI/CD**
 
-- Continuous Integration/Continuous Deployment (CI/CD) pipeline.
-- Automated testing.
+- **Containerization**: Docker containers for application packaging
+- **Container Orchestration**: Docker Compose for development, Kubernetes for production
+- **CI/CD Pipeline**: GitHub Actions or GitLab CI for automated deployment
+- **Automated Testing**: Unit, integration, and end-to-end test automation
+- **Blue-Green Deployment**: Zero-downtime deployment strategy
+- **Database Migration**: Automated database schema updates
 
-7. Scalability & Performance
+**6.3 Monitoring & Observability**
 
-**7.1 Scalability**
+- **Application Monitoring**: Real-time performance and error tracking
+- **Infrastructure Monitoring**: Server resources and network monitoring
+- **Log Aggregation**: Centralized logging with search capabilities
+- **Alerting System**: Automated notifications for critical issues
+- **Health Checks**: Automated system health verification
+- **Performance Metrics**: Response time and throughput monitoring
 
-- Horizontally scalable architecture.
-- Load balancing.
+## 7. Performance & Scalability
 
-**7.2 Performance**
+**7.1 Performance Requirements**
 
-- Optimized database queries.
-- Caching mechanisms.
-- Code profiling and optimization.
+- **Response Time**: API responses under 200ms for 95% of requests
+- **Page Load Time**: Web pages loading under 3 seconds on 3G connection
+- **Concurrent Users**: Support for 100+ simultaneous users
+- **Database Performance**: Complex queries executing under 1 second
+- **File Upload**: Image uploads completing under 30 seconds
+- **Report Generation**: Standard reports generating under 10 seconds
+
+**7.2 Scalability Architecture**
+
+- **Horizontal Scaling**: Application servers scaling based on load
+- **Database Optimization**: Query optimization and indexing strategy
+- **Caching Strategy**: Multi-level caching for improved performance
+- **CDN Integration**: Content delivery network for static assets
+- **Load Balancing**: Distribute traffic across multiple servers
+- **Auto-scaling**: Automatic resource scaling based on demand
+
+**7.3 Optimization Strategies**
+
+- **Database Query Optimization**: Efficient queries with proper indexing
+- **Image Optimization**: Automatic image compression and resizing
+- **Code Splitting**: Lazy loading for improved initial page load
+- **API Optimization**: Efficient data serialization and compression
+- **Client-Side Caching**: Browser caching strategies for static content
+
+## 8. Integration & Third-Party Services
+
+**8.1 Payment Gateway Integration**
+
+- **Thai Payment Methods**: Support for local banking and mobile payments
+- **International Cards**: Visa, Mastercard, and other international options
+- **Digital Wallets**: Integration with popular mobile payment systems
+- **Currency Support**: Multi-currency handling with real-time exchange rates
+
+**8.2 External Service Integration**
+
+- **Email Services**: SMTP integration for automated communications
+- **SMS Gateway**: Text message notifications for guests and staff
+- **Cloud Storage**: File storage for documents, images, and backups
+- **Mapping Services**: Integration for location and delivery services
+- **Weather API**: Local weather information for guest services
+
+**8.3 Future Integration Possibilities**
+
+- **Online Travel Agencies (OTAs)**: Booking.com, Agoda, Expedia integration
+- **Channel Manager**: Centralized inventory management across platforms
+- **Accounting Software**: Integration with financial management systems
+- **IoT Devices**: Smart locks, sensors, and automation systems
+- **Revenue Management**: Dynamic pricing and yield optimization tools

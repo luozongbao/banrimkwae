@@ -1,0 +1,84 @@
+# 1. Dashboard
+- **Purpose:** Overview of key metrics and quick access to important functions.
+- **Elements:**
+    - **Top Navigation:** Logo, User Profile, Logout
+    - **Key Metrics:**
+        - Occupancy Rate (current month)
+        - Total Revenue (current month)
+        - Arrivals Today
+        - Departures Today
+    - **Quick Actions:*  
+        - New Booking
+        - Check-In
+        - Check-Out
+        - Create Order
+    - **Recent Activity:**
+        - List of recent bookings, check-ins, orders, etc.
+# 2. Booking Management
+- **Purpose:** Manage bookings and reservations.
+- **Elements:**
+    - **Search/Filter:**
+        - Booking Number
+        - Guest Name
+        - Check-In Date
+        - Check-Out Date
+        - Status
+    - **Booking List:**
+        - Table with booking details (Booking Number, Guest Name, Room, Check-In, Check-Out, Status, Total Amount)
+        - Actions: View, Edit, Cancel
+    - **New Booking Form:**
+        - Guest Information (existing or new guest)
+        - Check-In/Check-Out Dates
+        - Room Selection (availability calendar)
+        - Rate and Total Amount
+        - Notes
+        - Save/Cancel Buttons
+# 3. Restaurant Order Management
+- **Purpose:** Manage restaurant orders and billing.
+- **Elements:**
+    - **Order List:**
+        - Table with order details (Order Number, Guest Name/Room, Order Date, Status, Total Amount)
+        - Actions: View, Edit, Complete, Cancel
+    - **New Order Form:**
+        - Guest/Room Selection
+        - Menu Items (searchable list with prices)
+        - Quantity
+        - Total Amount Calculation
+        - Notes
+        - Save/Cancel Buttons
+# 4. Inventory Management
+- **Purpose:** Manage stock levels and track inventory.
+- **Elements:**
+    - **Inventory List:**
+        - Table with item details (Name, Category, Current Quantity, Unit, Low Stock Alert)
+        - Actions: View, Edit, Add Stock, Remove Stock
+    - **Add/Edit Item Form:**
+        - Item Name
+        - Category
+        - Unit
+        - Current Quantity
+        - Minimum Quantity
+        - Supplier
+        - Save/Cancel Buttons
+    - **Stock Transaction Form:**
+        - Item Selection
+        - Transaction Type (Purchase, Usage, Adjustment, Wastage)
+        - Quantity
+        - Transaction Date
+        - Notes
+        - Save/Cancel Buttons
+# 5. Reports
+- **Purpose:** Generate reports on occupancy, revenue, and stock levels.
+- **Elements:**
+    - **Report Selection:**
+        - Dropdown list of available reports (Occupancy, Revenue, Stock)
+    - **Date Range Selection:**
+        - Start Date
+        - End Date
+    - **Filters:**
+        - Room Type
+        - Accommodation Type
+        - Category
+    - **Report Output:**
+        - Table or chart displaying the report data
+        - Export to CSV/Excel/PDF buttons

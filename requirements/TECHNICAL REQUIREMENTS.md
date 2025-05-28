@@ -1,4 +1,3 @@
-
 # Banrimkwae Resort Management System - Technical Requirements
 
 ## 1. System Architecture
@@ -11,10 +10,11 @@
 - **Three-Tier Architecture:**
     - **Presentation Tier**: Responsive web interface (React/Vue.js)
     - **Application Tier**: Business logic and API services (Python Django/Node.js Express)
-    - **Data Tier**: Relational database with caching layer (PostgreSQL + Redis)
+    - **Data Tier**: Relational database with caching layer (Mariadb + Redis)
 
-**1.2 Recommended Technology Stack**
+**1.2 Technology Stack Options**
 
+**Option A: Modern JavaScript Stack (Recommended for Scalability)**
 - **Frontend (Web Application):**
     - **Framework**: React.js with TypeScript for type safety
     - **UI Library**: Material-UI or Ant Design for consistent interface
@@ -35,11 +35,143 @@
     - **Search Engine**: PostgreSQL full-text search or Elasticsearch for advanced search
     - **Backup Strategy**: Automated daily backups with point-in-time recovery
 
+**Option B: PHP Stack (Practical Alternative for Local Development)**
+- **Frontend (Web Application):**
+    - **Framework**: PHP-based templates with Alpine.js for reactivity
+    - **UI Library**: Tailwind CSS or Bootstrap for responsive design
+    - **State Management**: Alpine.js stores or vanilla JavaScript
+    - **Charts & Analytics**: Chart.js or ApexCharts for data visualization
+    - **Real-time Updates**: Server-Sent Events (SSE) or AJAX polling
+
+- **Backend (API Services):**
+    - **Primary Option**: Laravel 10+ with API resources and sanctum authentication
+    - **Alternative**: Slim Framework 4 or CodeIgniter 4 for lightweight API
+    - **Authentication**: Laravel Sanctum or JWT-PHP library
+    - **API Documentation**: L5-Swagger or manual OpenAPI documentation
+    - **File Storage**: Local storage or cloud integration via PHP SDKs
+
+- **Database & Storage:**
+    - **Primary Database**: MariaDB 10.6+ with full UTF8MB4 support
+    - **Caching Layer**: Redis or file-based caching for session management
+    - **Search Engine**: MariaDB full-text search or integration with Elasticsearch
+    - **Backup Strategy**: Automated mysqldump with compression and rotation
+
 - **Infrastructure & Deployment:**
     - **Containerization**: Docker with Docker Compose for development
     - **Cloud Platform**: AWS, Google Cloud, or Azure (with Thai data center preference)
     - **Web Server**: Nginx as reverse proxy and static file server
     - **SSL/TLS**: Let's Encrypt for automatic certificate management
+
+## 1.3 PHP Implementation Considerations
+
+**Advantages of PHP Stack for Banrimkwae Resort:**
+
+✅ **Development Speed & Cost:**
+- Faster initial development and deployment
+- Lower hosting costs with shared hosting options
+- Abundant local developer talent in Thailand
+- Mature ecosystem with extensive documentation
+
+✅ **Database Compatibility:**
+- MariaDB fully supports the designed schema with UUIDs
+- Excellent performance for resort-sized operations
+- Built-in full-text search capabilities
+- Strong ACID compliance and transaction support
+
+✅ **Hosting & Deployment:**
+- Simple deployment on most web hosting providers
+- No complex containerization required for basic setup
+- Traditional LAMP/LEMP stack familiarity
+- Lower infrastructure complexity
+
+**Limitations & Mitigation Strategies:**
+
+⚠️ **Real-time Features:**
+```php
+// Challenge: No native WebSocket support like Node.js
+// Solutions:
+1. Server-Sent Events for live room status updates
+2. AJAX polling every 30-60 seconds for non-critical updates
+3. ReactPHP or Swoole for true real-time features if needed
+4. Push notifications via email/SMS for critical alerts
+```
+
+⚠️ **Modern UI Interactions:**
+```javascript
+// Challenge: Less dynamic than React/Vue
+// Solutions:
+1. Alpine.js for reactive components (Vue-like syntax)
+2. Stimulus.js for progressive enhancement
+3. Vanilla JavaScript with modern ES6+ features
+4. HTMX for dynamic content updates without full page reloads
+```
+
+⚠️ **API Structure:**
+```php
+// Challenge: Manual API design vs automated frameworks
+// Solutions:
+1. Laravel API Resources for consistent JSON responses
+2. Proper HTTP status codes and error handling
+3. Manual but thorough input validation
+4. Swagger documentation generation with L5-Swagger
+```
+
+**Recommended PHP Architecture:**
+
+```
+┌─────────────────────────────────────────────────────┐
+│                 Web Browser                         │
+│  (HTML + Alpine.js + Tailwind CSS + Chart.js)      │
+└─────────────────────┬───────────────────────────────┘
+                      │ AJAX/SSE
+┌─────────────────────▼───────────────────────────────┐
+│              Laravel Application                    │
+│  ┌─────────────────┬─────────────────┬─────────────┐ │
+│  │   Web Routes    │   API Routes    │   Admin     │ │
+│  │  (Blade/Livewire)│ (JSON Resources)│   Panel     │ │
+│  └─────────────────┴─────────────────┴─────────────┘ │
+│  ┌─────────────────────────────────────────────────┐ │
+│  │          Business Logic Layer                  │ │
+│  │    (Services, Repositories, Events)            │ │
+│  └─────────────────────────────────────────────────┘ │
+└─────────────────────┬───────────────────────────────┘
+                      │ Eloquent ORM
+┌─────────────────────▼───────────────────────────────┐
+│              MariaDB Database                       │
+│         (Resort Schema with Redis Cache)            │
+└─────────────────────────────────────────────────────┘
+```
+
+**PHP-Specific Implementation Notes:**
+
+1. **Session Management:**
+```php
+// Use Laravel Sanctum for API authentication
+// Redis for session storage and caching
+// Proper CSRF protection for web forms
+```
+
+2. **File Uploads:**
+```php
+// Laravel's built-in file upload handling
+// Image resizing with Intervention Image
+// Local storage or S3 integration via Flysystem
+```
+
+3. **Background Jobs:**
+```php
+// Laravel Queues for email sending
+// Cron jobs for inventory alerts
+// Database cleanup tasks
+```
+
+4. **Real-time Updates Alternative:**
+```php
+// Server-Sent Events for room status
+// Pusher integration for more advanced real-time features
+// WebSocket implementation with ReactPHP if needed
+```
+
 ## 2. Web Application Requirements
 
 **2.1 User Interface & Experience**
@@ -82,6 +214,7 @@
     - Scheduled report generation and email delivery
     - Data visualization with charts and graphs
     - Export functionality (PDF, Excel, CSV)
+
 ## 3. API Requirements & Design
 
 **3.1 RESTful API Endpoints**
@@ -121,7 +254,63 @@
     - `GET /api/bills/{id}/items` - Bill item details
     - `POST /api/bills/{id}/split` - Split billing functionality
 
-**3.2 Authentication & Security**
+**3.2 PHP API Implementation**
+
+**Laravel API Structure:**
+```php
+// routes/api.php
+Route::middleware('auth:sanctum')->group(function () {
+    // Accommodation Management
+    Route::apiResource('accommodations', AccommodationController::class);
+    Route::apiResource('rooms', RoomController::class);
+    Route::get('rooms/availability', [RoomController::class, 'availability']);
+    
+    // Booking & Reservation
+    Route::apiResource('bookings', BookingController::class);
+    Route::post('bookings/{id}/checkin', [BookingController::class, 'checkin']);
+    Route::post('bookings/{id}/checkout', [BookingController::class, 'checkout']);
+    Route::apiResource('guests', GuestController::class);
+    
+    // Restaurant Operations
+    Route::apiResource('menu', MenuController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::put('orders/{id}/status', [OrderController::class, 'updateStatus']);
+    
+    // Inventory Management
+    Route::apiResource('inventory', InventoryController::class);
+    Route::post('inventory/transactions', [InventoryController::class, 'transaction']);
+    Route::get('inventory/alerts', [InventoryController::class, 'alerts']);
+});
+```
+
+**API Response Format:**
+```php
+// Consistent JSON response structure
+class ApiResponse
+{
+    public static function success($data = null, $message = null, $code = 200)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'data' => $data,
+            'timestamp' => now()->toISOString()
+        ], $code);
+    }
+    
+    public static function error($message, $code = 400, $errors = null)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+            'errors' => $errors,
+            'timestamp' => now()->toISOString()
+        ], $code);
+    }
+}
+```
+
+**3.3 Authentication & Security**
 
 - **JWT Authentication**: Stateless token-based authentication with refresh tokens
 - **Role-Based Access Control (RBAC)**: Fine-grained permissions for different user roles
@@ -253,27 +442,95 @@
 - **API Optimization**: Efficient data serialization and compression
 - **Client-Side Caching**: Browser caching strategies for static content
 
-## 8. Integration & Third-Party Services
+**7.4 PHP Performance Optimization**
 
-**8.1 Payment Gateway Integration**
+**PHP-Specific Performance Strategies:**
 
-- **Thai Payment Methods**: Support for local banking and mobile payments
-- **International Cards**: Visa, Mastercard, and other international options
-- **Digital Wallets**: Integration with popular mobile payment systems
-- **Currency Support**: Multi-currency handling with real-time exchange rates
+**1. Caching Implementation:**
+```php
+// Laravel cache configuration
+'redis' => [
+    'client' => 'phpredis',
+    'options' => [
+        'cluster' => env('REDIS_CLUSTER', 'redis'),
+        'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+    ],
+    'default' => [
+        'url' => env('REDIS_URL'),
+        'host' => env('REDIS_HOST', '127.0.0.1'),
+        'password' => env('REDIS_PASSWORD', null),
+        'port' => env('REDIS_PORT', '6379'),
+        'database' => env('REDIS_DB', '0'),
+    ],
+];
 
-**8.2 External Service Integration**
+// Cache expensive queries
+Cache::remember('room_availability_'.date('Y-m-d'), 3600, function () {
+    return Room::with('bookings')->available()->get();
+});
+```
 
-- **Email Services**: SMTP integration for automated communications
-- **SMS Gateway**: Text message notifications for guests and staff
-- **Cloud Storage**: File storage for documents, images, and backups
-- **Mapping Services**: Integration for location and delivery services
-- **Weather API**: Local weather information for guest services
+**2. Database Optimization:**
+```php
+// Eloquent query optimization
+// Bad: N+1 query problem
+$bookings = Booking::all();
+foreach ($bookings as $booking) {
+    echo $booking->guest->name; // N+1 queries
+}
 
-**8.3 Future Integration Possibilities**
+// Good: Eager loading
+$bookings = Booking::with('guest')->get();
+foreach ($bookings as $booking) {
+    echo $booking->guest->name; // Only 2 queries
+}
 
-- **Online Travel Agencies (OTAs)**: Booking.com, Agoda, Expedia integration
-- **Channel Manager**: Centralized inventory management across platforms
-- **Accounting Software**: Integration with financial management systems
-- **IoT Devices**: Smart locks, sensors, and automation systems
-- **Revenue Management**: Dynamic pricing and yield optimization tools
+// Use database indexing
+Schema::table('bookings', function (Blueprint $table) {
+    $table->index(['check_in_date', 'check_out_date']);
+    $table->index('status');
+    $table->index('guest_id');
+});
+```
+
+**3. OpCode Caching:**
+```ini
+; php.ini configuration for production
+opcache.enable=1
+opcache.memory_consumption=128
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=4000
+opcache.revalidate_freq=60
+opcache.fast_shutdown=1
+```
+
+**4. Session Optimization:**
+```php
+// Use Redis for session storage
+SESSION_DRIVER=redis
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_FILES=storage/framework/sessions
+SESSION_CONNECTION=default
+```
+
+**Performance Targets for PHP Stack:**
+- **Page Load Time**: 2-4 seconds (slightly higher than Node.js/React)
+- **API Response Time**: 300-500ms for complex queries
+- **Memory Usage**: 128-256MB per PHP process
+- **Concurrent Users**: 50-100 users with proper caching
+- **Database Connections**: Connection pooling with 10-20 connections
+
+**Monitoring PHP Performance:**
+```php
+// Laravel Telescope for debugging (dev environment)
+// Laravel Horizon for queue monitoring
+// New Relic or Blackfire for production monitoring
+
+// Custom performance logging
+Log::info('Query Performance', [
+    'query' => $query,
+    'execution_time' => $executionTime,
+    'memory_usage' => memory_get_usage(true)
+]);
+```

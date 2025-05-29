@@ -1,5 +1,51 @@
+# Banrimkwae Resort Management System
+# Main project .gitignore
+
+# Project specific ignores
 gitignore/
-
 backend/vendor/
-
 frontend/node_modules/
+frontend/dist/
+backend/public/hot
+backend/public/build
+backend/storage/logs/
+backend/storage/framework/cache/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE/Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment Files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+logs/
+
+# Temporary Files
+*.tmp
+*.temp
+
+# Coverage Reports
+coverage/
+.nyc_output/
+
+# Documentation builds
+docs/build/

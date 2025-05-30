@@ -7,6 +7,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { DesignSystemDemo } from './components/DesignSystemDemo'
 import { UserManagementPage } from './pages/users/UserManagementPage'
 import { UserProfilePage } from './pages/users/UserProfilePage'
+import { RoleManagementPage } from './pages/roles/RoleManagementPage'
 
 function App() {
   return (
@@ -47,6 +48,16 @@ function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <UserProfilePage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/roles" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <RoleManagementPage />
                   </MainLayout>
                 </ProtectedRoute>
               } 

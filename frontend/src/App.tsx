@@ -1,9 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { MainLayout } from './components/layout/MainLayout'
 import { LoginPage } from './pages/auth/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { DesignSystemDemo } from './components/DesignSystemDemo'
+import { UserManagementPage } from './pages/users/UserManagementPage'
+import { UserProfilePage } from './pages/users/UserProfilePage'
 
 function App() {
   return (
@@ -25,6 +28,26 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DesignSystemDemo />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/users" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <UserManagementPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/users/:id" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <UserProfilePage />
+                  </MainLayout>
                 </ProtectedRoute>
               } 
             />

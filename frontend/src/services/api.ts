@@ -36,3 +36,4 @@ api.interceptors.response.use(
 );
 
 export * from './authAPI';
+export * from './usersAPI';

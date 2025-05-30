@@ -30,7 +30,7 @@ Phase 1 of the Banrimkwae Resort Management System has been successfully complet
 ### 🏗️ Technical Foundation
 - **Backend**: Laravel 10 with PHP 8.2 providing RESTful API
 - **Frontend**: React 18 with TypeScript for type safety
-- **Database**: MySQL 8.0 with optimized schema design
+- **Database**: MariaDB 10.11 with optimized schema design
 - **Infrastructure**: Docker containers with AWS ECS deployment
 - **Testing**: Jest, PHPUnit, and Cypress for comprehensive coverage
 

@@ -24,10 +24,17 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
+            'username' => fake()->unique()->userName(),
+            'phone' => fake()->phoneNumber(),
+            'department' => fake()->randomElement(['Front Office', 'Housekeeping', 'Restaurant', 'Activities', 'Maintenance']),
+            'position' => fake()->jobTitle(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'status' => fake()->randomElement(['active', 'inactive']),
+            'start_date' => fake()->dateTimeBetween('-2 years', 'now'),
             'remember_token' => Str::random(10),
         ];
     }
@@ -39,6 +46,16 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the user should be inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'inactive',
         ]);
     }
 }

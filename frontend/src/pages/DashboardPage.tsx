@@ -1,7 +1,9 @@
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useTranslation } from '../../hooks/useTranslation';
-import { Button } from '../../components/ui/Button';
+import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from '../hooks/useTranslation';
+import { Button } from '../components/ui/Button';
+import DashboardLayout from '../components/Dashboard/DashboardLayout';
+import ErrorBoundary from '../components/ui/ErrorBoundary';
 
 export const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -12,21 +14,22 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-off-white">
-      <header className="bg-white shadow">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900">
                 {t('common.resortName')}
               </h1>
-              <p className="text-gray-600">
-                Welcome back, {user?.first_name} {user?.last_name}!
+              <p className="text-gray-600 text-sm">
+                {t('dashboard.welcomeBack', { name: user?.name || 'User' })}
               </p>
             </div>
             <Button
               variant="outline"
               onClick={handleLogout}
+              size="sm"
             >
               {t('auth.logout')}
             </Button>
@@ -34,14 +37,10 @@ export const DashboardPage: React.FC = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
-            <p className="text-gray-500 text-lg">
-              Dashboard content will be implemented in the next phase
-            </p>
-          </div>
-        </div>
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <ErrorBoundary>
+          <DashboardLayout />
+        </ErrorBoundary>
       </main>
     </div>
   );

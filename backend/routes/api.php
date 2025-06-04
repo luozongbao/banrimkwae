@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,4 +47,13 @@ Route::middleware(['auth:sanctum', 'force.password.change'])->group(function () 
     // Settings Management
     Route::apiResource('settings', SettingController::class)->except(['store', 'destroy']);
     Route::patch('settings/batch', [SettingController::class, 'updateBatch'])->name('settings.batch-update');
+
+    // Dashboard Management
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::get('/summary', [DashboardController::class, 'getSummary'])->name('summary');
+        Route::get('/kpi/{kpiType}', [DashboardController::class, 'getKPIData'])->name('kpi');
+        Route::get('/charts/{chartType}', [DashboardController::class, 'getChartData'])->name('charts');
+        Route::post('/alerts/{alertId}/dismiss', [DashboardController::class, 'dismissAlert'])->name('alerts.dismiss');
+        Route::get('/realtime', [DashboardController::class, 'getRealtimeUpdates'])->name('realtime');
+    });
 });

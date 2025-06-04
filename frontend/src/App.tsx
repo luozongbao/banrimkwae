@@ -8,6 +8,7 @@ import { DesignSystemDemo } from './components/DesignSystemDemo'
 import { UserManagementPage } from './pages/users/UserManagementPage'
 import { UserProfilePage } from './pages/users/UserProfilePage'
 import { RoleManagementPage } from './pages/roles/RoleManagementPage'
+import { SettingsPage } from './pages/settings/SettingsPage'
 
 function App() {
   return (
@@ -58,6 +59,16 @@ function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <RoleManagementPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/settings" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <SettingsPage />
                   </MainLayout>
                 </ProtectedRoute>
               } 

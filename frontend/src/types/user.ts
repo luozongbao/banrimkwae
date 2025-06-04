@@ -32,6 +32,7 @@ export interface User {
   department_id?: number;
   position?: string;
   start_date?: string;
+  language?: string;
   is_active: boolean;
   last_login_at?: string;
   email_verified_at?: string;

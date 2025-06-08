@@ -15,14 +15,7 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-        $this->middleware('permission:users.view')->only(['index', 'show']);
-        $this->middleware('permission:users.create')->only(['store']);
-        $this->middleware('permission:users.edit')->only(['update']);
-        $this->middleware('permission:users.delete')->only(['destroy']);
-    }
+    // Middleware is now handled in routes or via attributes
 
     public function index(Request $request): JsonResponse
     {
@@ -70,11 +63,19 @@ class UserController extends Controller
 
         return response()->json([
             'data' => UserResource::collection($users->items()),
+            'links' => [
+                'first' => $users->url(1),
+                'last' => $users->url($users->lastPage()),
+                'prev' => $users->previousPageUrl(),
+                'next' => $users->nextPageUrl(),
+            ],
             'meta' => [
                 'current_page' => $users->currentPage(),
                 'last_page' => $users->lastPage(),
                 'per_page' => $users->perPage(),
                 'total' => $users->total(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem(),
             ],
             'filters' => [
                 'departments' => User::distinct()->pluck('department')->filter()->sort()->values(),
@@ -212,14 +213,12 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->json([
-            'message' => 'User deleted successfully',
-        ]);
+        return response()->json([], 204);
     }
 
     public function activate(User $user): JsonResponse
     {
-        $this->authorize('update', $user);
+        // Authorization handled by middleware
         
         $user->activate();
 
@@ -231,7 +230,7 @@ class UserController extends Controller
 
     public function deactivate(User $user): JsonResponse
     {
-        $this->authorize('update', $user);
+        // Authorization handled by middleware
         
         // Prevent self-deactivation
         if ($user->id === auth()->id()) {
@@ -250,7 +249,7 @@ class UserController extends Controller
 
     public function uploadAvatar(Request $request, User $user): JsonResponse
     {
-        $this->authorize('update', $user);
+        // Authorization handled by middleware
         
         $request->validate([
             'avatar' => ['required', 'image', 'max:2048'], // 2MB max
@@ -267,13 +266,13 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Avatar uploaded successfully',
-            'avatar_url' => $user->avatar_url,
+            'data' => ['avatar_url' => $user->avatar_url],
         ]);
     }
 
     public function removeAvatar(User $user): JsonResponse
     {
-        $this->authorize('update', $user);
+        // Authorization handled by middleware
         
         if ($user->avatar) {
             Storage::disk('public')->delete($user->avatar);

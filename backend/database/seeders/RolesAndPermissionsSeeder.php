@@ -48,36 +48,42 @@ class RolesAndPermissionsSeeder extends Seeder
             'profile.edit',
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+        // Create permissions for multiple guards
+        $guards = ['web', 'api', 'sanctum'];
+        foreach ($guards as $guard) {
+            foreach ($permissions as $permission) {
+                Permission::create(['name' => $permission, 'guard_name' => $guard]);
+            }
         }
 
-        // Create roles and assign permissions
-        $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo(Permission::all());
+        // Create roles and assign permissions for multiple guards
+        foreach ($guards as $guard) {
+            $adminRole = Role::create(['name' => 'admin', 'guard_name' => $guard]);
+            $adminRole->givePermissionTo(Permission::where('guard_name', $guard)->get());
 
-        $managerRole = Role::create(['name' => 'manager']);
-        $managerRole->givePermissionTo([
-            'users.view', 'users.create', 'users.edit',
-            'roles.view', 'roles.assign',
-            'settings.view', 'settings.edit',
-            'profile.view', 'profile.edit',
-        ]);
+            $managerRole = Role::create(['name' => 'manager', 'guard_name' => $guard]);
+            $managerRole->givePermissionTo(Permission::where('guard_name', $guard)->whereIn('name', [
+                'users.view', 'users.create', 'users.edit',
+                'roles.view', 'roles.assign',
+                'settings.view', 'settings.edit',
+                'profile.view', 'profile.edit',
+            ])->get());
 
-        $officerRole = Role::create(['name' => 'officer']);
-        $officerRole->givePermissionTo([
-            'users.view',
-            'profile.view', 'profile.edit',
-        ]);
+            $officerRole = Role::create(['name' => 'officer', 'guard_name' => $guard]);
+            $officerRole->givePermissionTo(Permission::where('guard_name', $guard)->whereIn('name', [
+                'users.view',
+                'profile.view', 'profile.edit',
+            ])->get());
 
-        $staffRole = Role::create(['name' => 'staff']);
-        $staffRole->givePermissionTo([
-            'profile.view', 'profile.edit',
-        ]);
+            $staffRole = Role::create(['name' => 'staff', 'guard_name' => $guard]);
+            $staffRole->givePermissionTo(Permission::where('guard_name', $guard)->whereIn('name', [
+                'profile.view', 'profile.edit',
+            ])->get());
 
-        $guestRole = Role::create(['name' => 'guest']);
-        $guestRole->givePermissionTo([
-            'profile.view', 'profile.edit',
-        ]);
+            $guestRole = Role::create(['name' => 'guest', 'guard_name' => $guard]);
+            $guestRole->givePermissionTo(Permission::where('guard_name', $guard)->whereIn('name', [
+                'profile.view', 'profile.edit',
+            ])->get());
+        }
     }
 }

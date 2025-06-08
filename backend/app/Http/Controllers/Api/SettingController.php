@@ -12,12 +12,7 @@ use Illuminate\Http\JsonResponse;
 
 class SettingController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-        $this->middleware('permission:settings.view')->only(['index', 'show', 'public']);
-        $this->middleware('permission:settings.edit')->only(['update', 'updateBatch']);
-    }
+    // Middleware is now handled in routes or via attributes
 
     public function index(Request $request): JsonResponse
     {

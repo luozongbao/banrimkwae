@@ -26,9 +26,9 @@ class AuthController extends Controller
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
-            throw ValidationException::withMessages([
-                'email' => [__('auth.throttle', ['seconds' => $seconds])],
-            ]);
+            return response()->json([
+                'message' => "Too many login attempts. Please try again in {$seconds} seconds.",
+            ], 429);
         }
 
         $credentials = $request->only('email', 'password');
@@ -43,17 +43,17 @@ class AuthController extends Controller
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             RateLimiter::hit($key);
             
-            throw ValidationException::withMessages([
-                'email' => [__('auth.failed')],
-            ]);
+            return response()->json([
+                'message' => 'These credentials do not match our records.',
+            ], 401);
         }
 
         // Check if user is active
         if (!$user->canAccessSystem()) {
             Auth::logout();
-            throw ValidationException::withMessages([
-                'email' => ['Your account is not active or verified.'],
-            ]);
+            return response()->json([
+                'message' => 'Your account is not active or verified.',
+            ], 401);
         }
 
         // Update last login
@@ -73,17 +73,22 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login successful',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->full_name,
-                'email' => $user->email,
-                'avatar' => $user->avatar_url,
-                'roles' => $user->getRoleNames(),
-                'permissions' => $user->getAllPermissions()->pluck('name'),
-                'preferences' => $user->preferences,
-                'force_password_change' => $user->force_password_change,
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'name' => $user->full_name,
+                    'email' => $user->email,
+                    'avatar' => $user->avatar_url,
+                    'roles' => $user->getRoleNames(),
+                    'permissions' => $user->getAllPermissions()->pluck('name'),
+                    'preferences' => $user->preferences,
+                    'force_password_change' => $user->force_password_change,
+                ],
+                'token' => $token,
+                'expires_at' => now()->addDays(30)->toISOString(),
             ],
-            'token' => $token,
         ]);
     }
 
@@ -144,8 +149,10 @@ class AuthController extends Controller
         $user = $request->user();
         
         return response()->json([
-            'user' => [
+            'data' => [
                 'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
                 'name' => $user->full_name,
                 'email' => $user->email,
                 'username' => $user->username,
@@ -161,6 +168,51 @@ class AuthController extends Controller
                 'force_password_change' => $user->force_password_change,
             ],
         ]);
+    }
+
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'department' => $request->department,
+            'position' => $request->position,
+            'status' => 'pending', // Requires admin approval
+        ]);
+
+        // Assign default role
+        $user->assignRole('user');
+
+        // Create token for immediate login
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        // Log activity
+        activity()
+            ->performedOn($user)
+            ->withProperties(['ip' => $request->ip()])
+            ->log('User registered');
+
+        return response()->json([
+            'message' => 'Registration successful',
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'name' => $user->full_name,
+                    'email' => $user->email,
+                    'username' => $user->username,
+                    'status' => $user->status,
+                    'roles' => $user->getRoleNames(),
+                ],
+                'token' => $token,
+                'expires_at' => now()->addDays(30)->toISOString(),
+            ],
+        ], 201);
     }
 
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
@@ -249,7 +301,10 @@ class AuthController extends Controller
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
-            'token' => $token,
+            'data' => [
+                'token' => $token,
+                'expires_at' => now()->addDays(30)->toISOString(),
+            ],
         ]);
     }
 

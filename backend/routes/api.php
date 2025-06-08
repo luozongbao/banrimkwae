@@ -42,7 +42,24 @@ Route::middleware(['auth:sanctum', 'force.password.change'])->group(function () 
     Route::delete('users/{user}/avatar', [UserController::class, 'removeAvatar'])->name('users.remove-avatar');
 
     // Role Management
-    Route::apiResource('roles', RoleController::class);
+    Route::get('roles/permissions', [RoleController::class, 'permissions'])->name('roles.permissions')->middleware('permission:roles.view');
+    Route::middleware('permission:roles.view')->group(function () {
+        Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
+    });
+    Route::middleware('permission:roles.create')->group(function () {
+        Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::post('roles/{role}/clone', [RoleController::class, 'clone'])->name('roles.clone');
+    });
+    Route::middleware('permission:roles.edit')->group(function () {
+        Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::patch('roles/{role}', [RoleController::class, 'update'])->name('roles.update.patch');
+        Route::post('roles/{role}/assign-users', [RoleController::class, 'assignUsers'])->name('roles.assign-users');
+        Route::post('roles/{role}/remove-users', [RoleController::class, 'removeUsers'])->name('roles.remove-users');
+    });
+    Route::middleware('permission:roles.delete')->group(function () {
+        Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
 
     // Settings Management
     Route::apiResource('settings', SettingController::class)->except(['store', 'destroy']);

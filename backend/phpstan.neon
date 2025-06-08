@@ -1,0 +1,17 @@
+parameters:
+    level: 8
+    paths:
+        - app
+        - config
+        - database
+        - routes
+    excludePaths:
+        - app/Console/Kernel.php
+        - vendor
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        - '#Unsafe usage of new static#'
+        - '#Access to an undefined property#'
+    symfony:
+        container_xml_path: bootstrap/cache/container.xml

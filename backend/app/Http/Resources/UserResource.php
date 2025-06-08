@@ -34,6 +34,7 @@ class UserResource extends JsonResource
             'last_login_at' => $this->last_login_at,
             'email_verified_at' => $this->email_verified_at,
             'force_password_change' => $this->force_password_change,
+            'preferences' => $this->preferences ?? [],
             'roles' => $this->whenLoaded('roles', function () {
                 return $this->roles->map(function ($role) {
                     return [
